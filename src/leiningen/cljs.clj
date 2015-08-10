@@ -1,8 +1,7 @@
 (ns leiningen.cljs
   "Provides a command line wrapper around cljs.build.api and cljs.watch.api"
-  (:require [leiningen.core.main :as lmain]
-            [leiningen.cljsbuild.config :as config]
-            [leiningen.cljsbuild.subproject :as subproject]
+  (:require [clojure.string :as str]
+            [leiningen.core.main :as lmain]
             [leiningen.core.eval :as leval]))
 
 
@@ -17,7 +16,7 @@
                             :repositories
                             :resource-paths])
       {:local-repo-classpath true
-       :dependencies (subproject/merge-dependencies (:dependencies project))
+       :dependencies (:dependencies project)
        :source-paths (concat
                        (:source-paths project)
                        (mapcat :source-paths builds))})
@@ -62,9 +61,8 @@ Where - watch-mode: auto or once
   [builds id]
   (first (filter #(= id (:id %)) builds)))
 
-(defn doo 
-  "Command line API for doo, which compiles a cljsbuild
-   and runs it in a js enviroment:
+(defn cljs 
+  "Command line API for cljs, which compiles your ClojureScript code:
 
   lein doo {js-env} {build-id}
 
@@ -76,19 +74,20 @@ Where - watch-mode: auto or once
   ([project] (lmain/info help-string))
   ([project watch-mode]
    ;; TODO: do all
-   )
-  ([project build-id watch-mode]
+   (lmain/info "You need to define a build id")
+   (lmain/info help-string))
+  ([project watch-mode build-id]
    (assert (contains? #{"auto" "once"} watch-mode)
      (str "Possible watch-modes are auto or once, " watch-mode " was given."))
    ;; FIX: execute in a try catch like the one in run-local-project
-   (let [builds (-> project config/extract-options :builds)
+   (let [builds (-> project :cljs :builds)
          {:keys [source-paths compiler] :as build}
          (find-by-id builds build-id)]
      (assert (not (empty? build))
        (str "The given build (" build-id ") was not found in these options: "
          (str/join ", " (map :id builds))))
      ;; FIX: there is probably a bug regarding the incorrect use of builds
-     (run-local-project project' [builds]
+     (run-local-project project [builds]
        '(require 'cljs.build.api)
        (if (= "auto" watch-mode)
          `(cljs.build.api/watch

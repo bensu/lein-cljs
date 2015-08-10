@@ -14,14 +14,16 @@
   :dependencies [[org.clojure/clojure "1.7.0"]
                  [org.clojure/clojurescript "1.7.48" :scope "provided"]]
 
-  :clean-targets ^{:protect false} [:target-path "resources/public/js/"]
+  :clean-targets ^{:protect false} [:target-path "out" "resources/public/js/"]
 
-  :cljsbuild
-  {:builds {:dev {:source-paths ["src" "test"]
-                  :main 'lein-cljs.core-test
-                  :compiler {:output-to "resources/public/js/testable.js"
-                             :optimizations :none}}
-            :test {:source-paths ["src" "test"]
-                   :compiler {:output-to "resources/public/js/testable.js"
-                              :main 'lein-cljs.runner
-                              :optimizations :whitespace}}}})
+  :cljs
+  {:builds [{:id "dev"
+             :source-paths ["src" "test"]
+             :main 'lein-cljs.core-test
+             :compiler {:output-to "resources/public/js/testable.js"
+                        :optimizations :none}}
+            {:id "test"
+             :source-paths ["src" "test"]
+             :compiler {:output-to "resources/public/js/testable.js"
+                        :main 'lein-cljs.runner
+                        :optimizations :whitespace}}]})
