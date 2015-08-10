@@ -10,24 +10,17 @@
   (with-meta
     (merge
       (select-keys project [:checkout-deps-shares
+                            :dependencies
                             :eval-in
                             :jvm-opts
                             :local-repo
                             :repositories
                             :resource-paths])
       {:local-repo-classpath true
-       :dependencies (:dependencies project)
        :source-paths (concat
                        (:source-paths project)
                        (mapcat :source-paths builds))})
     (meta project)))
-
-(defn add-dep
-  "Adds one dependency (needs to be a vector with a quoted symbol)
-  to the project's dependencies.
-  Ex: (add-dep project ['doo \"0.1.0-SNAPSHOT\"])"
-  [project dep]
-  (update-in project [:dependencies] #(conj % dep)))
 
 ;; well this is private in the leiningen.cljsbuild ns & figwheel!
 (defn run-local-project
@@ -54,7 +47,7 @@
 Usage:\n
   lein cljs {watch-mode} {build-id}\n
 Where - watch-mode: auto or once
-      - build-id: any of the ids under the :cljsbuild map in your project.clj\n")
+      - build-id: any of the ids under the :cljs map in your project.clj\n")
 
 (defn find-by-id
   "Out of a seq of builds, returns the one with the given id"
@@ -64,17 +57,14 @@ Where - watch-mode: auto or once
 (defn cljs 
   "Command line API for cljs, which compiles your ClojureScript code:
 
-  lein doo {js-env} {build-id}
+  lein cljs {watch-mode} {build-id}
 
-  lein doo {js-env} {build-id} {watch-mode}
-
-  - js-env: any of slimer, phantom, rhinno
-  - build-id: the build-id from your cljsbuild configuration
-  - watch-mode (optional): either auto (default) or once which exits with 0 if the tests were successful and 1 if they failed."
+  - watch-mode: either auto or once,
+  - build-id: the build-id from your :cljs map in project.clj"
   ([project] (lmain/info help-string))
   ([project watch-mode]
    ;; TODO: do all
-   (lmain/info "You need to define a build id")
+   (lmain/info "You need to specify a build id:\n")
    (lmain/info help-string))
   ([project watch-mode build-id]
    (assert (contains? #{"auto" "once"} watch-mode)
