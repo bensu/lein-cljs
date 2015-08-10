@@ -1,5 +1,5 @@
 (defproject lein-cljs "0.1.0-SNAPSHOT"
-  :description "lein-cljs is a minimal lein plugin for ClojureScript compiler"
+  :description "A minimal lein plugin for the ClojureScript compiler"
   :url "https://github.com/bensu/lein-cljs"
   :license {:name "Eclipse Public License"
             :url "http://www.eclipse.org/legal/epl-v10.html"}
