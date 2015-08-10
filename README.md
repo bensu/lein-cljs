@@ -1,10 +1,13 @@
-# doo 
+# lein-cljs
 
-A Leiningen plugin to do many wonderful things.
+A minimal lein plugin to use the ClojureScript compiler
 
 ## Usage
 
-FIXME: Use this for user-level plugins:
+    lein cljs {watch-mode} {build-id}
+
+Where `watch-mode` is either `auto` or `once` and `build-id` is any of
+the ids under the `:cljs` map in your `project.clj`.
 
 ## License
 
